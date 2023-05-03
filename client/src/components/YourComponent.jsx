@@ -21,6 +21,8 @@ const YourComponent = () => {
     }
   };*/
 
+  //by using useProvider we can extract and show stuff as in the official website
+
   return (
     /* <div
       style={{
