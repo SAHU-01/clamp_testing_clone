@@ -1,10 +1,11 @@
-import { Navbar, Alert } from "./components";
+import { Navbar, Alert, RainbowKit } from "./components";
 
 const App = () => {
   return (
     <div className="min-h-screen">
-      <Alert />
-      <Navbar />
+      {/*<Alert />
+      <Navbar />*/}
+      <RainbowKit />
     </div>
   );
 };

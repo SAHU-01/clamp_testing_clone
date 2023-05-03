@@ -1,6 +1,6 @@
 import React from "react";
 import { create } from "zustand";
-import { FiX } from "react-icons/fi";
+import { HiOutlineX } from "react-icons/hi";
 
 const useAlertStore = create((set) => ({
   showAlert: true,
@@ -28,7 +28,7 @@ const Alert = () => {
               className=" text-white hover:text-white focus:outline-none focus:text-white ml-5"
               onClick={hideAlert}
             >
-              <FiX />
+              <HiOutlineX />
             </button>
           </div>
         </div>
