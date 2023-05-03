@@ -1,6 +1,6 @@
 import { Explore, Dashboard, History, Watchlist } from "./Tabs";
 import { useEffect, useRef, useState } from "react";
-import create from "zustand";
+import { create } from "zustand";
 
 const tabsData = [
   {
