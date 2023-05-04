@@ -1,25 +1,23 @@
 import { create } from "zustand";
+import { useState } from "react";
 import { FiArrowDownRight, FiArrowUpRight } from "react-icons/fi";
-
-const useCardStore = create((set) => ({
-  cardHeading: "",
-  setCardHeading: (cardHeading) => set({ cardHeading }),
-  setImageSrc: (imageSrc) => set({ imageSrc }),
-  setNumOfImages: (numOfImages) => set({ numOfImages }),
-}));
+import BuyToken from "./BuyToken";
+import { AiOutlineStar, AiFillStar } from "react-icons/ai";
+import { IoCloseSharp } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 const colors = [
-  "bg-red-500",
-  "bg-teal-500",
-  "bg-orange-500",
-  "bg-slate-500",
+  "bg-yellow-300",
   "bg-violet-500",
+  "bg-pink-500",
+  "bg-[#2775CA]",
+  "bg-[#F19241]",
 ];
 function getColor(name) {
   function hashCode(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      hash = str.charCodeAt(i) + ((hash << 6) - hash);
     }
     return hash;
   }
@@ -32,15 +30,7 @@ function getColor(name) {
   }
 }
 
-const Card = ({
-  cardHeading,
-  imageSrc,
-  numOfImages,
-  priceChangeMap,
-  tokens,
-}) => {
-  //const { cardHeading, imageSrc, numOfImages, priceChange, token } =
-  //useCardStore();
+const Card = ({ cardHeading, priceChangeMap, tokens }) => {
   const calculatePercentChange = () => {
     let sum = 0;
     tokens.map((token) => {
@@ -52,17 +42,84 @@ const Card = ({
   const percentageChange = calculatePercentChange();
   const isPositive = percentageChange >= 0;
 
-  console.log(getColor("Dan"));
+  const [isWatchlistActive, setIsWatchlistActive] = useState(false);
+  const [toastId, setToastId] = useState(null);
+
+  const clearToast = () => {
+    toast.dismiss(toastId);
+    setToastId(null);
+  };
+
+  const showToast = () => {
+    const message = isWatchlistActive
+      ? "Added to watchlist"
+      : "Removed from watchlist";
+    const options = {
+      position: "bottom-right",
+      autoClose: 900000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+    };
+    if (toastId) {
+      toast.update(toastId, { render: message });
+    } else {
+      const newToastId = toast.dark(message, options);
+      setToastId(newToastId);
+    }
+  };
+
+  const toggleWatchlist = () => {
+    setIsWatchlistActive(!isWatchlistActive);
+    showToast();
+    clearToast();
+  };
+
+  const alertMessage = isWatchlistActive
+    ? "added to watchlist"
+    : "removed from watchlist";
+
+  const watchlistIcon = isWatchlistActive ? (
+    <AiFillStar
+      onClick={toggleWatchlist}
+      style={{ color: "#FF7A30", width: "24px", height: "24px" }}
+    />
+  ) : (
+    <AiOutlineStar
+      onClick={toggleWatchlist}
+      style={{ width: "24px", height: "24px" }}
+    />
+  );
   return (
     <div className="bg-white rounded-sm border border-black">
       <div className="flex">
         {tokens.map((token) => {
           const className = getColor(token);
-          return <div className={`h-3 w-full ${className}`} />;
+          return <div className={`h-2 w-full ${className}`} />;
         })}
       </div>
-      <div className="p-4">
+      <div className="p-4 flex flex-row justify-between relative">
         <h2 className="text-lg font-medium text-gray-900">{cardHeading}</h2>
+        {/*<AiOutlineStar className="inline-block w-6 h-6" />*/}
+        {isWatchlistActive ? (
+          <AiFillStar
+            onClick={toggleWatchlist}
+            style={{ color: "#FF7A30", width: "24px", height: "24px" }}
+          />
+        ) : (
+          <AiOutlineStar
+            onClick={toggleWatchlist}
+            style={{ width: "24px", height: "24px" }}
+          />
+        )}
+        {toastId && (
+          <IoCloseSharp
+            onClick={clearToast}
+            style={{ width: "20px", height: "20px", cursor: "pointer" }}
+          />
+        )}
       </div>
       <div className="flex items-center justify-between p-4">
         <div>
@@ -75,16 +132,14 @@ const Card = ({
                 key={i}
                 src={`https://test.joinclamp.com/tokens/${token}.svg`}
                 alt={`Token ${i + 1}`}
-                className="w-6 h-6 rounded-full"
+                className="w-6 h-6"
               />
             ))}
           </div>
         </div>
-        <div>
-          <h3 className="text-sm font-medium text-gray-500 mb-1">
-            Price Change
-          </h3>
-          <h4 className="text-xs font-medium text-gray-500 mb-1 text-right">
+        <div className="text-right">
+          <h3 className="text-sm font-medium text-gray-500">Price Change</h3>
+          <h4 className="text-xs font-medium text-gray-500 mb-1">
             (in 24 hours)
           </h4>
           <div className="flex flex-row text-right">
@@ -110,11 +165,8 @@ const Card = ({
           </div>
         </div>
       </div>
-      <div className="">
-        <button className="w-full bg-black hover:bg-slate-800 text-white font-bold py-2">
-          Buy
-        </button>
-      </div>
+
+      <BuyToken cardHeading={cardHeading} token={tokens} />
     </div>
   );
 };

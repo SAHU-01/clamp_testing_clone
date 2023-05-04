@@ -1,4 +1,6 @@
 import { Alert, Navbar, Tab } from "./components";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   return (
@@ -6,6 +8,7 @@ const App = () => {
       <Alert />
       <Navbar />
       <Tab />
+      <ToastContainer />
     </div>
   );
 };
