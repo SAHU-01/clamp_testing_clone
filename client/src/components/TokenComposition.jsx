@@ -38,6 +38,9 @@ const TokenComposition = ({ tokenName }) => {
               step={1}
             />
           </div>
+          <div className="text-xs px-2 mt-1 font-medium mb-2">
+            text value to change
+          </div>
         </div>
       ))}
     </div>
