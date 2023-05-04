@@ -7,6 +7,7 @@ const Watchlist = () => {
       <h1 className="text-md text-slate-500 font-medium mb-10">
         Saved Indexes would appear here. Refer them for future purpose.
       </h1>
+      <div></div>
     </div>
   );
 };

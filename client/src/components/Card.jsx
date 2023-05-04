@@ -5,6 +5,7 @@ import BuyToken from "./BuyToken";
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 import { IoCloseSharp } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { useAccount } from "wagmi";
 
 const colors = [
   "bg-yellow-300",
@@ -30,7 +31,9 @@ function getColor(name) {
   }
 }
 
-const Card = ({ cardHeading, priceChangeMap, tokens }) => {
+const Card = ({ cardHeading, priceChangeMap, tokens, id }) => {
+  const { isConnected, address } = useAccount();
+
   const calculatePercentChange = () => {
     let sum = 0;
     tokens.map((token) => {
@@ -72,9 +75,51 @@ const Card = ({ cardHeading, priceChangeMap, tokens }) => {
   };
 
   const toggleWatchlist = () => {
-    setIsWatchlistActive(!isWatchlistActive);
-    showToast();
-    clearToast();
+    //setIsWatchlistActive(!isWatchlistActive);
+    //showToast();
+    //clearToast();
+
+    if (isWatchlistActive) {
+      //console.log("send delete request");
+      const promises = [
+        fetch(`https://api.joinclamp.com/v1/indexes/watchlist/${id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userAddress: address }),
+        }).then((res) => res.json()),
+      ];
+      Promise.all(promises).then(() => {
+        setIsWatchlistActive(!isWatchlistActive);
+        showToast();
+        clearToast();
+      });
+    } else {
+      const promises = [
+        fetch("https://api.joinclamp.com/v1/users", {
+          method: "POST",
+          body: JSON.stringify({ userAddress: address }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then((res) => res.json()),
+
+        fetch(`https://api.joinclamp.com/v1/indexes/watchlist/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userAddress: address }),
+        }).then((res) => res.json()),
+      ];
+
+      Promise.all(promises).then(() => {
+        setIsWatchlistActive(!isWatchlistActive);
+        showToast();
+        clearToast();
+      });
+    }
   };
 
   const alertMessage = isWatchlistActive
@@ -103,17 +148,19 @@ const Card = ({ cardHeading, priceChangeMap, tokens }) => {
       <div className="p-4 flex flex-row justify-between relative">
         <h2 className="text-lg font-medium text-gray-900">{cardHeading}</h2>
         {/*<AiOutlineStar className="inline-block w-6 h-6" />*/}
-        {isWatchlistActive ? (
-          <AiFillStar
-            onClick={toggleWatchlist}
-            style={{ color: "#FF7A30", width: "24px", height: "24px" }}
-          />
-        ) : (
-          <AiOutlineStar
-            onClick={toggleWatchlist}
-            style={{ width: "24px", height: "24px" }}
-          />
-        )}
+        {isConnected &&
+          (isWatchlistActive ? (
+            <AiFillStar
+              onClick={toggleWatchlist}
+              style={{ color: "#FF7A30", width: "24px", height: "24px" }}
+            />
+          ) : (
+            <AiOutlineStar
+              onClick={toggleWatchlist}
+              style={{ width: "24px", height: "24px" }}
+            />
+          ))}
+
         {toastId && (
           <IoCloseSharp
             onClick={clearToast}

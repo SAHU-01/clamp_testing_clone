@@ -2,8 +2,10 @@ import React from "react";
 import useFetchCards from "./useFetchCards";
 import Card from "./Card";
 import { useMediaQuery } from "react-responsive";
+//import { useAccount } from "wagmi";
 
 const Cards = () => {
+  // const { isConnected, address } = useAccount();
   const { response, error } = useFetchCards();
 
   const isLargeScreen = useMediaQuery({ query: "(min-width: 1024px)" });
@@ -38,9 +40,11 @@ const Cards = () => {
       {response.all_indexes.map((card) => (
         <Card
           key={card._id}
+          id={card._id}
           cardHeading={card.indexName}
           tokens={card.indexComposition.map((m) => `${m.tokenName}`)}
           priceChangeMap={response.currentOraclePrices}
+          //isConnected={isConnected}
         />
       ))}
     </div>

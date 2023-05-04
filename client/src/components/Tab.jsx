@@ -1,23 +1,28 @@
 import { Explore, Dashboard, History, Watchlist } from "./Tabs";
 import { useEffect, useRef, useState } from "react";
 import { create } from "zustand";
+import { useAccount } from "wagmi";
 
 const tabsData = [
   {
     label: "Explore",
     content: <Explore />,
+    showUnauthenticated: true,
   },
   {
     label: "Dashboard",
     content: <Dashboard />,
+    showUnauthenticated: false,
   },
   {
     label: "History",
     content: <History />,
+    showUnauthenticated: false,
   },
   {
     label: "Watchlist",
     content: <Watchlist />,
+    showUnauthenticated: false,
   },
 ];
 
@@ -29,6 +34,7 @@ const useTabStore = create((set) => ({
 function Tab() {
   const activeTabIndex = useTabStore((state) => state.activeTabIndex);
   const setActiveTabIndex = useTabStore((state) => state.setActiveTabIndex);
+  const { isConnected, address } = useAccount();
 
   const [tabUnderlineWidth, setTabUnderlineWidth] = useState(0);
 
@@ -52,20 +58,21 @@ function Tab() {
       <div className="relative lg:mx-44 mx-6">
         <div className="flex space-x-5">
           {tabsData.map((tab, idx) => {
-            return (
-              <button
-                key={idx}
-                ref={(el) => (tabsRef.current[idx] = el)}
-                className={`pt-2 pb-2 ${
-                  activeTabIndex === idx
-                    ? "text-black border-b-2 font-medium border-black"
-                    : "text-slate-700"
-                }`}
-                onClick={() => setActiveTabIndex(idx)}
-              >
-                {tab.label}
-              </button>
-            );
+            if (isConnected || tab.showUnauthenticated)
+              return (
+                <button
+                  key={idx}
+                  ref={(el) => (tabsRef.current[idx] = el)}
+                  className={`pt-2 pb-2 ${
+                    activeTabIndex === idx
+                      ? "text-black border-b-2 font-medium border-black"
+                      : "text-slate-700"
+                  }`}
+                  onClick={() => setActiveTabIndex(idx)}
+                >
+                  {tab.label}
+                </button>
+              );
           })}
         </div>
       </div>

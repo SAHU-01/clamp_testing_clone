@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const TokenCompositionPurchase = ({ tokenName }) => {
+const TokenCompositionPurchase = ({ tokenName, setStep }) => {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (newValue) => {
@@ -9,6 +9,7 @@ const TokenCompositionPurchase = ({ tokenName }) => {
 
   const handleEditClick = () => {
     setIsEditing(true);
+    setStep(1);
   };
 
   const handleStep1Click = () => {

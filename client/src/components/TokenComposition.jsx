@@ -1,14 +1,39 @@
 import React, { useState } from "react";
 import Slider from "./Slider";
 
-const TokenComposition = ({ tokenName }) => {
+const TokenComposition = ({
+  tokenName,
+  val,
+  setVal,
+  priceChangeMap,
+  amount,
+}) => {
   const numBars = tokenName.length === 2 ? 2 : 3;
-  //const [value, setValue] = useState(numBars === 3 ? 2 : undefined);
 
-  const [value, setValue] = useState(50);
+  const handleChange = (newValue, idx) => {
+    if (idx === 0)
+      setVal(() => ({
+        0: newValue,
+        1: (100 - newValue) / (numBars - 1),
+        2: (100 - newValue) / (numBars - 1),
+      }));
+    else if (idx === 1)
+      setVal(() => ({
+        0: (100 - newValue) / (numBars - 1),
+        1: newValue,
+        2: (100 - newValue) / (numBars - 1),
+      }));
+    else if (idx === 2)
+      setVal(() => ({
+        0: (100 - newValue) / (numBars - 1),
+        1: (100 - newValue) / (numBars - 1),
+        2: newValue,
+      }));
+  };
 
-  const handleChange = (newValue) => {
-    setValue(newValue);
+  const calcTokenPrice = (token, i) => {
+    const price = priceChangeMap[token].price;
+    return ((amount * val[i]) / price).toFixed(19);
   };
 
   return (
@@ -31,15 +56,15 @@ const TokenComposition = ({ tokenName }) => {
           <div>
             {/*<Slider value={50} setValue={(val) => {}} numBars={numBars} />*/}
             <Slider
-              value={value}
-              onChange={handleChange}
+              value={val[i]}
+              onChange={(v) => handleChange(v, i)}
               min={0}
               max={100}
               step={1}
             />
           </div>
           <div className="text-xs px-2 mt-1 font-medium mb-2">
-            text value to change
+            {calcTokenPrice(token, i)}
           </div>
         </div>
       ))}

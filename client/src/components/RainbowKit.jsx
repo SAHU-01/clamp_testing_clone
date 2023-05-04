@@ -27,7 +27,7 @@ const { chains, provider } = configureChains(
 );
 
 /*const { connectors } = getDefaultWallets({
-  appName: "My RainbowKit App", // if required later , use appinfo
+  appName: "My RainbowKit App", // inf required later , use appinfo
   // projectId: "220c0d82a4beb3e77052df03347fba7e",
   chains,
 });*/ // for default  wallet
