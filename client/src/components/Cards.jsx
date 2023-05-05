@@ -5,7 +5,6 @@ import { useMediaQuery } from "react-responsive";
 //import { useAccount } from "wagmi";
 
 const Cards = () => {
-  // const { isConnected, address } = useAccount();
   const { response, error } = useFetchCards();
 
   const isLargeScreen = useMediaQuery({ query: "(min-width: 1024px)" });
