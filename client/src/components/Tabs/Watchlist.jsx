@@ -29,14 +29,12 @@ const Watchlist = () => {
       <h1 className="text-md text-slate-500 font-medium mb-10">
         Saved Indexes would appear here. Refer them for future purpose.
       </h1>
-      {watchlist.length > 0 ? (
-        <div>
+      {watchlist.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from(new Set(watchlist)).map((cardId) => (
             <WishListedCards ids={cardId} key={cardId} />
           ))}
         </div>
-      ) : (
-        <p>Loading...</p>
       )}
     </div>
   );

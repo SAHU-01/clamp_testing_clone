@@ -31,7 +31,13 @@ function getColor(name) {
   }
 }
 
-const Card = ({ cardHeading, priceChangeMap, tokens, id }) => {
+const Card = ({
+  cardHeading,
+  priceChangeMap,
+  tokens,
+  id,
+  defaultWatchlistValue = false,
+}) => {
   const { isConnected, address } = useAccount();
 
   const calculatePercentChange = () => {
@@ -45,7 +51,9 @@ const Card = ({ cardHeading, priceChangeMap, tokens, id }) => {
   const percentageChange = calculatePercentChange();
   const isPositive = percentageChange >= 0;
 
-  const [isWatchlistActive, setIsWatchlistActive] = useState(false);
+  const [isWatchlistActive, setIsWatchlistActive] = useState(
+    defaultWatchlistValue
+  );
   const [toastId, setToastId] = useState(null);
 
   const clearToast = () => {
@@ -53,13 +61,10 @@ const Card = ({ cardHeading, priceChangeMap, tokens, id }) => {
     setToastId(null);
   };
 
-  const showToast = () => {
-    const message = isWatchlistActive
-      ? "Added to watchlist"
-      : "Removed from watchlist";
+  const showToast = (message) => {
     const options = {
       position: "bottom-right",
-      autoClose: 900000,
+      autoClose: 9000,
       hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
@@ -72,6 +77,35 @@ const Card = ({ cardHeading, priceChangeMap, tokens, id }) => {
       const newToastId = toast.dark(message, options);
       setToastId(newToastId);
     }
+  };
+
+  const addToWatchlist = () => {
+    fetch(`https://api.joinclamp.com/v1/indexes/watchlist/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userAddress: address }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        showToast(res.message);
+        setIsWatchlistActive(true);
+      });
+  };
+  const removeFromWatchlist = () => {
+    fetch(`https://api.joinclamp.com/v1/indexes/watchlist/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userAddress: address }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        showToast(res.message);
+        setIsWatchlistActive(false);
+      });
   };
 
   const toggleWatchlist = () => {
@@ -151,12 +185,12 @@ const Card = ({ cardHeading, priceChangeMap, tokens, id }) => {
         {isConnected &&
           (isWatchlistActive ? (
             <AiFillStar
-              onClick={toggleWatchlist}
+              onClick={removeFromWatchlist}
               style={{ color: "#FF7A30", width: "24px", height: "24px" }}
             />
           ) : (
             <AiOutlineStar
-              onClick={toggleWatchlist}
+              onClick={addToWatchlist}
               style={{ width: "24px", height: "24px" }}
             />
           ))}
