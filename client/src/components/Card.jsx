@@ -91,7 +91,15 @@ const Card = ({
       .then((res) => {
         showToast(res.message);
         setIsWatchlistActive(true);
+        clearToast();
       });
+    fetch("https://api.joinclamp.com/v1/users", {
+      method: "POST",
+      body: JSON.stringify({ userAddress: address }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => res.json());
   };
   const removeFromWatchlist = () => {
     fetch(`https://api.joinclamp.com/v1/indexes/watchlist/${id}`, {
@@ -105,6 +113,7 @@ const Card = ({
       .then((res) => {
         showToast(res.message);
         setIsWatchlistActive(false);
+        clearToast();
       });
   };
 
