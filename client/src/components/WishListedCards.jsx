@@ -2,10 +2,8 @@ import React from "react";
 import useFetchCards from "./useFetchCards";
 import Card from "./Card";
 import { useMediaQuery } from "react-responsive";
-//import { useAccount } from "wagmi";
 
 const WishListedCards = ({ ids }) => {
-  // const { isConnected, address } = useAccount();
   const { response, error } = useFetchCards();
 
   const isLargeScreen = useMediaQuery({ query: "(min-width: 1024px)" });
