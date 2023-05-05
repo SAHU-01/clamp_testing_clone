@@ -47,7 +47,7 @@ const BuyTokenModal = ({ cardHeading, token, showModal, onCloseModal }) => {
   };
 
   if (!response) {
-    return <div>Loading...</div>;
+    return <div> </div>;
   }
 
   if (error) return <div>{error.message}</div>;
